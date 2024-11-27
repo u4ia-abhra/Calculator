@@ -242,17 +242,18 @@ class _MyHomePageState extends State<MyHomePage> {
          numOne = double.parse(result);
          return doesContainDecimal(result);
   }
+
   String mul() {
          result = (numOne * numTwo).toString();
          numOne = double.parse(result);
          return doesContainDecimal(result);
   }
+  
   String div() {
           result = (numOne / numTwo).toString();
           numOne = double.parse(result);
           return doesContainDecimal(result);
   }
-
 
   String doesContainDecimal(dynamic result) {
     
