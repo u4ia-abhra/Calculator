@@ -80,49 +80,65 @@ class _MyHomePageState extends State<MyHomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-                calcbutton('AC',Colors.grey,Colors.white),
+                // calcbutton('AC',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                // calcbutton('+/-',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                // calcbutton('%',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                calcbutton('/',Colors.grey,Colors.white),
                 calcbutton('%',Colors.grey,Colors.white),
-                calcbutton('^',Colors.grey,Colors.white),
-                calcbutton('/',Colors.grey,Colors.white),                
+                calcbutton('^',Colors.grey,Colors.white),          
+                calcbutton('/',Colors.grey,Colors.white),
+                      
             ],
           ),
           const SizedBox(height: 10,),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-                calcbutton('7',Colors.grey,Colors.white),
-                calcbutton('8',Colors.grey,Colors.white),
-                calcbutton('9',Colors.grey,Colors.white),
-                calcbutton('x',Colors.grey,Colors.white),                
+                calcbutton('7',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                calcbutton('8',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                calcbutton('9',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                // calcbutton('7',Colors.grey,Colors.white),
+                // calcbutton('8',Colors.grey,Colors.white),
+                // calcbutton('9',Colors.grey,Colors.white),
+                calcbutton('x',Colors.orange,Colors.white),                
             ],
           ),
           const SizedBox(height: 10,),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-                calcbutton('4',Colors.grey,Colors.white),
-                calcbutton('5',Colors.grey,Colors.white),
-                calcbutton('6',Colors.grey,Colors.white),
-                calcbutton('-',Colors.grey,Colors.white),                
+                calcbutton('4',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                calcbutton('5',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                calcbutton('6',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                // calcbutton('4',Colors.grey,Colors.white),
+                // calcbutton('5',Colors.grey,Colors.white),
+                // calcbutton('6',Colors.grey,Colors.white),
+                calcbutton('-',Colors.orange,Colors.white),                
             ],
           ),
           const SizedBox(height: 10,),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-                calcbutton('3',Colors.grey,Colors.white),
-                calcbutton('2',Colors.grey,Colors.white),
-                calcbutton('1',Colors.grey,Colors.white),
-                calcbutton('+',Colors.grey,Colors.white),                
+                calcbutton('3',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                calcbutton('2',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                calcbutton('1',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                // calcbutton('3',Colors.grey,Colors.white),
+                // calcbutton('2',Colors.grey,Colors.white),
+                // calcbutton('1',Colors.grey,Colors.white),
+                calcbutton('+',Colors.orange,Colors.white),                
             ],
           ),
           const SizedBox(height: 10,),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-                calcbutton('00',Colors.grey,Colors.white),
-                calcbutton('0',Colors.grey,Colors.white),
-                calcbutton('.',Colors.grey,Colors.white),
+                calcbutton('00',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                calcbutton('0',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                calcbutton('.',const Color.fromARGB(255, 61, 61, 61),Colors.white),
+                // calcbutton('00',Colors.grey,Colors.white),
+                // calcbutton('0',Colors.grey,Colors.white),
+                // calcbutton('.',Colors.grey,Colors.white),
                 calcbutton('=',Colors.orange,Colors.white),                
             ],
           ),
@@ -191,13 +207,13 @@ class _MyHomePageState extends State<MyHomePage> {
      finalResult = doesContainDecimal(result);
     } else if(btnText == '.') {
       if(!result.toString().contains('.')) {
-        result = result.toString()+'.';
+        result = '$result.';
       }
       finalResult = result;
     }
     
     else if(btnText == '+/-') {
-        result.toString().startsWith('-') ? result = result.toString().substring(1): result = '-'+result.toString();        
+        result.toString().startsWith('-') ? result = result.toString().substring(1): result = '-$result';        
         finalResult = result;        
     
     } 
@@ -242,8 +258,9 @@ class _MyHomePageState extends State<MyHomePage> {
     
     if(result.toString().contains('.')) {
         List<String> splitDecimal = result.toString().split('.');
-        if(!(int.parse(splitDecimal[1]) > 0))
-         return result = splitDecimal[0].toString();
+        if(!(int.parse(splitDecimal[1]) > 0)) {
+          return result = splitDecimal[0].toString();
+        }
     }
     return result; 
   }
