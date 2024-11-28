@@ -74,7 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
       if (eval % 1 == 0) {
         return eval.toInt().toString();
       } else {
-        return eval.toStringAsFixed(8); // Customize the number of decimal places
+        return eval
+            .toStringAsFixed(8); // Customize the number of decimal places
       }
     } catch (e) {
       return 'Error';
@@ -99,15 +100,24 @@ class _MyHomePageState extends State<MyHomePage> {
             scrollDirection: Axis.vertical,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    displayText,
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 50,
+              children: <Widget>[                
+                Expanded(
+                  child: Container(
+                    height: 100,
+                    child: SingleChildScrollView(                  
+                      scrollDirection: Axis.horizontal,
+                      reverse: true,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          displayText,
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 50,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 )
