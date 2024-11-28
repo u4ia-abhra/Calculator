@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -26,8 +24,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  
   dynamic displayText = '0';
 
   //design of calculator button
@@ -68,18 +64,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 //calculator logic
-String _evaluateExpression(String expression) {
-  try {
-    expression = expression.replaceAll('x', '*').replaceAll('÷', '/');
-    Parser parser = Parser();
-    Expression exp = parser.parse(expression);
-    ContextModel cm = ContextModel();
-    double eval = exp.evaluate(EvaluationType.REAL, cm);
-    return eval.toString();
-  } catch (e) {
-    return 'Error';
+  String _evaluateExpression(String expression) {
+    try {
+      expression = expression.replaceAll('x', '*').replaceAll('÷', '/');
+      Parser parser = Parser();
+      Expression exp = parser.parse(expression);
+      ContextModel cm = ContextModel();
+      double eval = exp.evaluate(EvaluationType.REAL, cm);
+      if (eval % 1 == 0) {
+        return eval.toInt().toString();
+      } else {
+        return eval.toStringAsFixed(8); // Customize the number of decimal places
+      }
+    } catch (e) {
+      return 'Error';
+    }
   }
-}
 
 //calculator UI
   @override
