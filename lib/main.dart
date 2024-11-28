@@ -51,7 +51,13 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       if (value == 'AC') {
         displayText = '0';
-      } else if (value == '=') {
+      } 
+      else if (value == 'Del') {
+        if (displayText.isNotEmpty) {
+          displayText = displayText.substring(0, displayText.length - 1);
+        }
+      }
+      else if (value == '=') {
         try {
           displayText = _evaluateExpression(displayText);
         } catch (e) {
@@ -128,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               calcbutton('AC', Colors.grey, Colors.white),
-              calcbutton('+/-', Colors.grey, Colors.white),
+              calcbutton('Del', Colors.grey, Colors.white),
               calcbutton('%', Colors.grey, Colors.white),
               calcbutton('/', Colors.grey, Colors.white),
             ],
@@ -160,9 +166,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   '5', const Color.fromARGB(255, 61, 61, 61), Colors.white),
               calcbutton(
                   '6', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              // calcbutton('4',Colors.grey,Colors.white),
-              // calcbutton('5',Colors.grey,Colors.white),
-              // calcbutton('6',Colors.grey,Colors.white),
               calcbutton('-', Colors.orange, Colors.white),
             ],
           ),
@@ -178,9 +181,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   '2', const Color.fromARGB(255, 61, 61, 61), Colors.white),
               calcbutton(
                   '1', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              // calcbutton('3',Colors.grey,Colors.white),
-              // calcbutton('2',Colors.grey,Colors.white),
-              // calcbutton('1',Colors.grey,Colors.white),
               calcbutton('+', Colors.orange, Colors.white),
             ],
           ),
@@ -196,9 +196,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   '0', const Color.fromARGB(255, 61, 61, 61), Colors.white),
               calcbutton(
                   '.', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              // calcbutton('00',Colors.grey,Colors.white),
-              // calcbutton('0',Colors.grey,Colors.white),
-              // calcbutton('.',Colors.grey,Colors.white),
               calcbutton('=', Colors.orange, Colors.white),
             ],
           ),
