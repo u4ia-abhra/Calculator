@@ -24,7 +24,7 @@ class _ScientificState extends State<Scientific> {
       child: Text(
         btntxt,
         style: TextStyle(
-          fontSize: 35,
+          fontSize: 30,
           color: txtcolor,
         ),
       ),
@@ -53,23 +53,37 @@ class _ScientificState extends State<Scientific> {
   }
 
 //calculator logic
-  String _evaluateExpression(String expression) {
-    try {
-      expression = expression.replaceAll('x', '*').replaceAll('÷', '/');
-      Parser parser = Parser();
-      Expression exp = parser.parse(expression);
-      ContextModel cm = ContextModel();
-      double eval = exp.evaluate(EvaluationType.REAL, cm);
-      if (eval % 1 == 0) {
-        return eval.toInt().toString();
-      } else {
-        return eval
-            .toStringAsFixed(8); // Customize the number of decimal places
-      }
-    } catch (e) {
-      return 'Error';
+String _evaluateExpression(String expression) {
+  try {
+    // Replace 'x' and '÷' with '*' and '/'
+    expression = expression.replaceAll('x', '*').replaceAll('÷', '/').replaceAll('%', '/100');
+
+    // Handle scientific notation (e.g., "2e3" -> "2*10^3")
+    final scientificNotationPattern = RegExp(r'(\d+(\.\d+)?[eE][+-]?\d+)');
+    expression = expression.replaceAllMapped(scientificNotationPattern, (match) {
+      String scientific = match.group(0)!;
+      return scientific.replaceAllMapped(
+          RegExp(r'([eE])([+-]?\d+)'), (expMatch) => '*10^${expMatch.group(2)}');
+    });
+
+    // Parse and evaluate the expression
+    Parser parser = Parser();
+    Expression exp = parser.parse(expression);
+    ContextModel cm = ContextModel();
+    double eval = exp.evaluate(EvaluationType.REAL, cm);
+
+    if (eval % 1 == 0) {
+      // Return integer if the result is a whole number
+      return eval.toInt().toString();
+    } else {
+      // Limit to 8 decimal places
+      return eval.toStringAsFixed(8);
     }
+  } catch (e) {
+    return 'Error';
   }
+}
+
 
 //calculator UI
   @override
@@ -116,17 +130,16 @@ class _ScientificState extends State<Scientific> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              calcbutton('AC', Colors.grey, Colors.white),
-              calcbutton('Del', Colors.grey, Colors.white),
-              calcbutton('%', Colors.grey, Colors.white),
-              calcbutton('nCr', Colors.grey, Colors.white),
-              calcbutton('nPr', Colors.grey, Colors.white),
+              calcbutton('AC', Colors.orange, Colors.white),
+              calcbutton('Del', Colors.orange, Colors.white),
+              calcbutton('%', Colors.orange, Colors.white),
+              calcbutton('(', Colors.orange, Colors.white),
+              calcbutton(')', Colors.orange, Colors.white),
             ],
           ),
           const SizedBox(
             height: 10,
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -147,12 +160,9 @@ class _ScientificState extends State<Scientific> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              calcbutton(
-                  '7', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              calcbutton(
-                  '8', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              calcbutton(
-                  '9', const Color.fromARGB(255, 61, 61, 61), Colors.white),
+              calcbutton('7', Colors.grey, Colors.white),
+              calcbutton('8', Colors.grey, Colors.white),
+              calcbutton('9', Colors.grey, Colors.white),
               calcbutton(
                   'e', const Color.fromARGB(255, 61, 61, 61), Colors.white),
               calcbutton('ln', Colors.orange, Colors.white),
@@ -164,12 +174,10 @@ class _ScientificState extends State<Scientific> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              calcbutton(
-                  '4', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              calcbutton(
-                  '5', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              calcbutton(
-                  '6', const Color.fromARGB(255, 61, 61, 61), Colors.white),
+              // calcbutton('/', Colors.orange, Colors.white),
+              calcbutton('4', Colors.grey, Colors.white),
+              calcbutton('5', Colors.grey, Colors.white),
+              calcbutton('6', Colors.grey, Colors.white),
               calcbutton(
                   'x', const Color.fromARGB(255, 61, 61, 61), Colors.white),
               calcbutton('/', Colors.orange, Colors.white),
@@ -181,12 +189,9 @@ class _ScientificState extends State<Scientific> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              calcbutton(
-                  '1', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              calcbutton(
-                  '2', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              calcbutton(
-                  '3', const Color.fromARGB(255, 61, 61, 61), Colors.white),
+              calcbutton('1', Colors.grey, Colors.white),
+              calcbutton('2', Colors.grey, Colors.white),
+              calcbutton('3', Colors.grey, Colors.white),
               calcbutton(
                   '+', const Color.fromARGB(255, 61, 61, 61), Colors.white),
               calcbutton('-', Colors.orange, Colors.white),
@@ -198,12 +203,9 @@ class _ScientificState extends State<Scientific> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              calcbutton(
-                  '00', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              calcbutton(
-                  '0', const Color.fromARGB(255, 61, 61, 61), Colors.white),
-              calcbutton(
-                  '.', const Color.fromARGB(255, 61, 61, 61), Colors.white),
+              calcbutton('00', Colors.grey, Colors.white),
+              calcbutton('0', Colors.grey, Colors.white),
+              calcbutton('.', Colors.grey, Colors.white),
               calcbutton(
                   '%', const Color.fromARGB(255, 61, 61, 61), Colors.white),
               calcbutton('=', Colors.orange, Colors.white),

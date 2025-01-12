@@ -29,8 +29,9 @@ class Basic extends StatefulWidget {
 
 class _BasicState extends State<Basic> {
   dynamic displayText = '0';
+  bool isResultDisplayed = false; // Flag to track if result is displayed
 
-  //design of calculator button
+  // Design of calculator button
   Widget calcbutton(String btntxt, Color btncolor, Color txtcolor) {
     return ElevatedButton(
       onPressed: () {
@@ -50,49 +51,72 @@ class _BasicState extends State<Basic> {
     );
   }
 
-//calculator display logic
+  // Calculator display logic
   void onButtonPressed(String value) {
     setState(() {
       if (value == 'AC') {
         displayText = '0';
-      } 
-      else if (value == 'Del') {
-        if (displayText.isNotEmpty) {
+        isResultDisplayed = false; // Reset the flag
+      } else if (value == 'Del') {
+        if (displayText.isNotEmpty && !isResultDisplayed) {
           displayText = displayText.substring(0, displayText.length - 1);
         }
-      }
-      else if (value == '=') {
+      } else if (value == '=') {
         try {
           displayText = _evaluateExpression(displayText);
+          isResultDisplayed = true; // Mark that the result is displayed
         } catch (e) {
           displayText = 'Error';
         }
       } else {
-        displayText == '0' ? displayText = value : displayText += value;
+        // Check if the result was displayed and the new input is a number
+        if (isResultDisplayed && RegExp(r'^\d$').hasMatch(value)) {
+          displayText = value; // Reset display to the new number
+          isResultDisplayed = false; // Reset the flag
+        } else {
+          displayText == '0' ? displayText = value : displayText += value;
+          isResultDisplayed = false; // Reset the flag if other input
+        }
       }
     });
   }
 
-//calculator logic
+  // Calculator logic
   String _evaluateExpression(String expression) {
     try {
+      // Replace 'x' and '÷' with '*' and '/'
       expression = expression.replaceAll('x', '*').replaceAll('÷', '/');
+
+      // Remove trailing operand if the expression ends with one
+      final operandPattern = RegExp(r'[+\-*/^]$');
+      if (operandPattern.hasMatch(expression)) {
+        expression = expression.substring(0, expression.length - 1);
+      }
+
+      // Parse and evaluate the expression
       Parser parser = Parser();
       Expression exp = parser.parse(expression);
       ContextModel cm = ContextModel();
       double eval = exp.evaluate(EvaluationType.REAL, cm);
+
+      // Return integer if the result is a whole number
       if (eval % 1 == 0) {
         return eval.toInt().toString();
       } else {
-        return eval
-            .toStringAsFixed(8); // Customize the number of decimal places
+        // Limit to 8 significant digits
+        String evalStr = eval.toString();
+        if (evalStr.contains('e') || evalStr.length > 8) {
+          // Handle scientific notation or long results
+          return eval.toStringAsPrecision(8);
+        }
+        return evalStr; // Return as-is for short results
       }
     } catch (e) {
       return 'Error';
     }
   }
 
-//calculator home screen UI
+  // Calculator UI remains unchanged
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,8 +124,7 @@ class _BasicState extends State<Basic> {
       appBar: AppBar(
         title: const Text('Basic Calculator'),
         backgroundColor: Colors.black,
-        foregroundColor: Colors.orange,  
-        //button for scientific calculator navigation    
+        foregroundColor: Colors.orange,
         actions: [
           Align(
             alignment: Alignment.topRight,
@@ -112,21 +135,21 @@ class _BasicState extends State<Basic> {
               icon: Icon(Icons.science),
             ),
           ),
-        ],           
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          //calculator display
+          // Calculator display
           SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[                
+              children: <Widget>[
                 Expanded(
                   child: Container(
                     height: 100,
-                    child: SingleChildScrollView(                  
+                    child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       reverse: true,
                       child: Padding(
@@ -146,6 +169,7 @@ class _BasicState extends State<Basic> {
               ],
             ),
           ),
+          // Calculator buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -155,9 +179,7 @@ class _BasicState extends State<Basic> {
               calcbutton('/', Colors.grey, Colors.white),
             ],
           ),
-          const SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -217,7 +239,7 @@ class _BasicState extends State<Basic> {
           ),
           const SizedBox(
             height: 20,
-          ),
+          )
         ],
       ),
     );
