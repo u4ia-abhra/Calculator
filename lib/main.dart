@@ -85,7 +85,7 @@ class _BasicState extends State<Basic> {
   String _evaluateExpression(String expression) {
     try {
       // Replace 'x' and '÷' with '*' and '/'
-      expression = expression.replaceAll('x', '*').replaceAll('÷', '/');
+      expression = expression.replaceAll('x', '*').replaceAll('÷', '/').replaceAll('%', '/100');
 
       // Remove trailing operand if the expression ends with one
       final operandPattern = RegExp(r'[+\-*/^]$');
@@ -116,7 +116,7 @@ class _BasicState extends State<Basic> {
     }
   }
 
-  // Calculator UI remains unchanged
+  // Calculator UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
