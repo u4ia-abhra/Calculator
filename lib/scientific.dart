@@ -10,8 +10,9 @@ class Scientific extends StatefulWidget {
 
 class _ScientificState extends State<Scientific> {
   dynamic displayText = '0';
+  bool isResultDisplayed = false; // Flag to track if result is displayed
 
-  //design of calculator button
+  // Design of calculator button
   Widget calcbutton(String btntxt, Color btncolor, Color txtcolor) {
     return ElevatedButton(
       onPressed: () {
@@ -31,40 +32,53 @@ class _ScientificState extends State<Scientific> {
     );
   }
 
-//calculator display logic
+  // Calculator display logic
   void onButtonPressed(String value) {
     setState(() {
       if (value == 'AC') {
         displayText = '0';
+        isResultDisplayed = false; // Reset the flag
       } else if (value == 'Del') {
-        if (displayText.isNotEmpty) {
+        if (displayText.isNotEmpty && !isResultDisplayed) {
           displayText = displayText.substring(0, displayText.length - 1);
         }
       } else if (value == '=') {
         try {
           displayText = _evaluateExpression(displayText);
+          isResultDisplayed = true; // Mark that the result is displayed
         } catch (e) {
           displayText = 'Error';
         }
       } else {
-        displayText == '0' ? displayText = value : displayText += value;
+        // Check if the result was displayed and the new input is a number
+        if (isResultDisplayed && RegExp(r'^\d$').hasMatch(value)) {
+          displayText = value; // Reset display to the new number
+          isResultDisplayed = false; // Reset the flag
+        } else {
+          displayText == '0' ? displayText = value : displayText += value;
+          isResultDisplayed = false; // Reset the flag if other input
+        }
       }
     });
   }
 
-//calculator logic
-String _evaluateExpression(String expression) {
+  // Calculator logic
+  String _evaluateExpression(String expression) {
   try {
-    // Replace 'x' and '÷' with '*' and '/'
+    // Replace 'x' and '÷' with '*' and '/' and '%' with '/100'
     expression = expression.replaceAll('x', '*').replaceAll('÷', '/').replaceAll('%', '/100');
 
-    // Handle scientific notation (e.g., "2e3" -> "2*10^3")
-    final scientificNotationPattern = RegExp(r'(\d+(\.\d+)?[eE][+-]?\d+)');
-    expression = expression.replaceAllMapped(scientificNotationPattern, (match) {
-      String scientific = match.group(0)!;
-      return scientific.replaceAllMapped(
-          RegExp(r'([eE])([+-]?\d+)'), (expMatch) => '*10^${expMatch.group(2)}');
+    // Automatically add parentheses for functions like sqrt, sin, cos, tan, log, ln
+    final functionPattern = RegExp(r'(sqrt|sin|cos|tan|log|ln)(\d+(\.\d+)?)');
+    expression = expression.replaceAllMapped(functionPattern, (match) {
+      return '${match.group(1)}(${match.group(2)})';
     });
+
+    // Remove trailing operand if the expression ends with one
+    final operandPattern = RegExp(r'[+\-*/^]$');
+    if (operandPattern.hasMatch(expression)) {
+      expression = expression.substring(0, expression.length - 1);
+    }
 
     // Parse and evaluate the expression
     Parser parser = Parser();
@@ -72,20 +86,24 @@ String _evaluateExpression(String expression) {
     ContextModel cm = ContextModel();
     double eval = exp.evaluate(EvaluationType.REAL, cm);
 
+    // Return integer if the result is a whole number
     if (eval % 1 == 0) {
-      // Return integer if the result is a whole number
       return eval.toInt().toString();
     } else {
-      // Limit to 8 decimal places
-      return eval.toStringAsFixed(8);
+      // Limit to 8 significant digits
+      String evalStr = eval.toString();
+      if (evalStr.contains('e') || evalStr.length > 8) {
+        // Handle scientific notation or long results
+        return eval.toStringAsPrecision(8);
+      }
+      return evalStr; // Return as-is for short results
     }
   } catch (e) {
     return 'Error';
   }
 }
 
-
-//calculator UI
+  // Calculator UI remains unchanged
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,7 +182,7 @@ String _evaluateExpression(String expression) {
               calcbutton('8', Colors.grey, Colors.white),
               calcbutton('9', Colors.grey, Colors.white),
               calcbutton(
-                  'e', const Color.fromARGB(255, 61, 61, 61), Colors.white),
+                  '^', const Color.fromARGB(255, 61, 61, 61), Colors.white),
               calcbutton('ln', Colors.orange, Colors.white),
             ],
           ),
